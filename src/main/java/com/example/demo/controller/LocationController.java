@@ -1,4 +1,4 @@
-package com.example.demo.controller;  // 注意改成你的包名！
+package com.example.demo.controller;
 
 import com.example.demo.dao.UserLocationDao;
 import com.example.demo.entity.UserLocation;
@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.time.LocalDate;
 import java.util.List;
-
 
 @CrossOrigin("*")
 @RestController
@@ -24,15 +25,22 @@ public class LocationController {
         return userLocationDao.getAllLocations();
     }
 
-    // 获取每个用户最新时间的经纬度
+    // ====================== 【修复完成】获取指定日期每个用户最新位置 ======================
     @GetMapping("/locations/latest")
-    public List<UserLocation> getLatestLocations() {
-        return userLocationDao.getLatestLocationsByUser();
+    public List<UserLocation> getLatestLocations(
+            @RequestParam(required = false) String date
+    ) {
+        LocalDate queryDate = date == null ? LocalDate.now() : LocalDate.parse(date);
+        return userLocationDao.getLatestLocationsByDate(queryDate);
     }
 
-    // 获取单个用户当天全部的历史轨迹数据
+    // ====================== 【修复完成】获取指定日期用户当天轨迹 ======================
     @GetMapping("/locations/user/{usercode}")
-    public List<UserLocation> getTodayLocationsByUser(@PathVariable String usercode) {
-        return userLocationDao.getTodayLocationsByUser(usercode);
+    public List<UserLocation> getTodayLocationsByUser(
+            @PathVariable String usercode,
+            @RequestParam(required = false) String date
+    ) {
+        LocalDate queryDate = date == null ? LocalDate.now() : LocalDate.parse(date);
+        return userLocationDao.getUserLocationsByDate(usercode, queryDate);
     }
 }
