@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserLocationMapper">
+
+    <!-- 自定义SQL：获取指定日期每个用户最新位置 -->
+    <select id="getLatestLocationsByDate" resultType="com.example.demo.entity.UserLocation">
+        SELECT a.id, a.usercode, a.longitude, a.latitude, a.create_time,
+               b.username, b.ckl, b.dsl, b.hj
+        FROM user_location a
+                 LEFT JOIN acd_ryzd b ON a.usercode = b.usercode
+        WHERE date(a.create_time) = #{dateStr}
+          AND (a.usercode, a.create_time) IN
+            (SELECT usercode, MAX(create_time) FROM user_location
+            WHERE date(create_time) = #{dateStr} GROUP BY usercode)
+    </select>
+
+    <!-- 自定义SQL：获取指定日期用户轨迹 -->
+    <select id="getUserLocationsByDate" resultType="com.example.demo.entity.UserLocation">
+        SELECT a.id, a.usercode, a.longitude, a.latitude, a.create_time,
+               b.username, b.ckl, b.dsl, b.hj
+        FROM user_location a
+                 LEFT JOIN acd_ryzd b ON a.usercode = b.usercode
+        WHERE a.usercode = #{usercode} AND date(a.create_time) = #{dateStr}
+        ORDER BY a.create_time ASC
+    </select>
+
+</mapper>

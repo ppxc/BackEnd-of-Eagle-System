@@ -1,21 +1,31 @@
 package com.example.demo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 
+@TableName("user_location")
 public class UserLocation {
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String usercode;
     private Double longitude;
     private Double latitude;
+    @TableField("create_time")
     private LocalDateTime createTime;
 
-    // ====================== 新增这 4 个字段 ======================
-    private String username;  // 姓名
-    private String ckl;       // ckl
-    private String dsl;       // dsl
-    private String hj;        // hj
+    // 关联表字段
+    @TableField(exist = false)
+    private String username;
+    @TableField(exist = false)
+    private String ckl;
+    @TableField(exist = false)
+    private String dsl;
+    @TableField(exist = false)
+    private String hj;
 
-    // ====================== Getter & Setter ======================
     public Long getId() {
         return id;
     }
@@ -56,7 +66,6 @@ public class UserLocation {
         this.createTime = createTime;
     }
 
-    // ====================== 新增字段的 Get/Set ======================
     public String getUsername() {
         return username;
     }
