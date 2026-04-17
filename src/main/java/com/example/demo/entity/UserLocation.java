@@ -33,6 +33,11 @@ public class UserLocation {
 
     @TableField(exist = false)
     private String address;
+    @TableField(exist = false)
+    private String groups;  // 添加 group 字段
+    @TableField(exist = false)
+    private String groupscode;  // 添加 groupcode 字段
+
 
     public Long getId() {
         return id;

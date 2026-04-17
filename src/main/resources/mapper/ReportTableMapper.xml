@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ReportTableMapper">
+    
+    <select id="getCurGzlData" resultType="com.example.demo.entity.Cur_Gzl_Table">
+        SELECT a.comname as comName, a.username as userName, a.usercode as userCode, 
+               a.groups, a.groupscode as groupsCode, 
+               sum(ck_jsl) as ckJsl, sum(ck_jsl_wcl) as ckJslWcl, sum(ck_wcl) as ckWcl, 
+               sum(ds_tjl) as dsTjl, sum(ds_wcl) as dsWcl, sum(ds_zfl) as dsZfl, 
+               sum(shougen) as shouGen, sum(hougen) as houGen, sum(tiaojie) as tiaoJie, 
+               sum(ja) as ja, sum(zl) as zl
+        FROM acd_dangri_gzl_ry a
+        WHERE a.groups is not null
+          AND a.groupscode not in ('5101701','5101702','5101703')
+          AND a.tjdate &gt;= #{startDate} AND a.tjdate &lt;= #{endDate}
+          <if test="comName != null and comName != ''">
+              AND a.comname like concat('%', #{comName}, '%')
+          </if>
+          <if test="groups != null and groups != ''">
+              AND a.groups like concat('%', #{groups}, '%')
+          </if>
+          <if test="userName != null and userName != ''">
+              AND a.username like concat('%', #{userName}, '%')
+          </if>
+        GROUP BY 1,2,3,4,5
+        ORDER BY comName desc
+    </select>
+    
+</mapper>
