@@ -1,0 +1,28 @@
+package com.example.demo.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+@TableName("acd_ryzd")
+public class Group {
+    // @TableId(type = IdType.AUTO)
+    private String groups;
+    private String groupscode;
+
+    public String getGroups() {
+        return groups;
+    }
+
+    public void setGroups(String groups) {
+        this.groups = groups;
+    }
+
+    public String getGroupscode() {
+        return groupscode;
+    }
+
+    public void setGroupscode(String groupscode) {
+        this.groupscode = groupscode;
+    }
+}
