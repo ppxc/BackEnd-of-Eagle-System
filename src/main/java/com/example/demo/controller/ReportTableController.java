@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*") // 允许前端跨域访问
+@CrossOrigin("*")
 public class ReportTableController {
 
     @Autowired
@@ -29,22 +29,28 @@ public class ReportTableController {
             @RequestParam(required = false) String userName
     ) {
         try {
-            if (endDate == null && endDate.trim().isEmpty()) {
-                endDate = startDate; // 如果没有结束日期，使用开始日期
+            // 日期都为空 → 取最大日期
+            if ((startDate == null || startDate.trim().isEmpty())
+                    && (endDate == null || endDate.trim().isEmpty())) {
+
+                // 直接调用service
+                String maxDate = reportTableService.getMaxTjDate();
+                startDate = maxDate;
+                endDate = maxDate;
             }
-            
-            System.out.println("接收到的参数：");
-            System.out.println("startDate: " + startDate);
-            System.out.println("endDate: " + endDate);
-            System.out.println("comName: " + comName);
-            System.out.println("groups: " + groups);
-            System.out.println("userName: " + userName);
-            
-            List<CurGzlTableRy> data = reportTableService.getCurGzlData(startDate, endDate, comName, groups, userName);
+
+            // 只有开始日期
+            if (endDate == null || endDate.trim().isEmpty()) {
+                endDate = startDate;
+            }
+
+            List<CurGzlTableRy> data = reportTableService.getCurGzlData(
+                    startDate, endDate, comName, groups, userName);
+
             return Result.success(data);
+
         } catch (Exception e) {
-            return Result.error("获取当前工作量数据失败: " + e.getMessage());
+            return Result.error("获取失败：" + e.getMessage());
         }
     }
-
 }

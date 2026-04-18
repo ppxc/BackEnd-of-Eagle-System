@@ -17,4 +17,9 @@ public class ReportTableServiceImpl implements ReportTableService {
     public List<CurGzlTableRy> getCurGzlData(String startDate, String endDate, String comName, String groups, String userName) {
         return reportTableMapper.getCurGzlData(startDate, endDate, comName, groups, userName);
     }
+
+    @Override
+    public String getMaxTjDate() {
+        return reportTableMapper.getMaxTjDate();
+    }
 }

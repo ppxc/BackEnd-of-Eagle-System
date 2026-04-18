@@ -25,5 +25,12 @@
         GROUP BY 1,2,3,4,5
         ORDER BY comName desc
     </select>
-    
+
+    <select id="getMaxTjDate" resultType="java.lang.String">
+        SELECT MAX(tjdate)
+        FROM acd_dangri_gzl_ry
+        WHERE groups IS NOT NULL
+          AND groupscode NOT IN ('5101701','5101702','5101703')
+    </select>
+
 </mapper>
