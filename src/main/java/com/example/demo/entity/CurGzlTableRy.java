@@ -63,4 +63,7 @@ public class CurGzlTableRy {
     
     @TableField("tjdate")
     private String tjDate; // 统计日期
+
+    @TableField("tjtime")
+    private String maxTjTime; // 统计时间
 }
