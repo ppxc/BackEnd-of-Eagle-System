@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @TableName("acd_dangri_gzl_ry")
-public class Cur_Gzl_Table {
+public class CurGzlTableRy {
     
     @TableId(type = IdType.AUTO)
     private Long id;

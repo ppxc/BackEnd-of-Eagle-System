@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper
 public interface GroupMapper extends BaseMapper<Group> {
-    
-    @Select("SELECT groups, groupscode FROM acd_ryzd")
+
     List<Group> selectAllGroups();
 }
