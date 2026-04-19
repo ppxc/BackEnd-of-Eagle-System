@@ -16,7 +16,7 @@ public interface ReportTableMapper{
                                       @Param("groups") String groups,
                                       @Param("userName") String userName);
 
-    String getMaxTjDate();
+    String getMaxTjDateByTable(@Param("tableName") String tableName);
 
     List<CurGzlTableBm> getCurGzlDataBm(
             @Param("startDate") String startDate,
@@ -24,5 +24,4 @@ public interface ReportTableMapper{
             @Param("comName") String comName
     );
 
-    String getMaxTjDateBm();
 }

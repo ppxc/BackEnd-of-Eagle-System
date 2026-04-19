@@ -60,9 +60,10 @@
         ORDER BY comName desc
     </select>
 
-    <select id="getMaxTjDateBm" resultType="java.lang.String">
+    <!-- 通用：根据表名获取最大统计日期 -->
+    <select id="getMaxTjDateByTable" resultType="java.lang.String">
         SELECT MAX(tjdate)
-        FROM acd_dangri_gzl_bm
+        FROM ${tableName}
     </select>
 
 </mapper>

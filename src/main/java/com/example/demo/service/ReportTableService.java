@@ -7,11 +7,10 @@ import java.util.List;
 public interface ReportTableService {
     List<CurGzlTableRy> getCurGzlData(String startDate, String endDate, String comName, String groups, String userName);
 
-    String getMaxTjDate();
+    // 通用获取最大日期
+    String getMaxTjDate(String tableName);
 
     // 新增：按部门统计
     List<CurGzlTableBm> getCurGzlDataBm(String startDate, String endDate, String comName);
 
-    // 新增：获取最大日期（可共用）
-    String getMaxTjDateBm();
 }

@@ -35,7 +35,7 @@ public class ReportTableController {
                     && (endDate == null || endDate.trim().isEmpty())) {
 
                 // 直接调用service
-                String maxDate = reportTableService.getMaxTjDate();
+                String maxDate = reportTableService.getMaxTjDate("acd_dangri_gzl_ry");
                 startDate = maxDate;
                 endDate = maxDate;
             }
@@ -64,7 +64,7 @@ public class ReportTableController {
         try {
             if ((startDate == null || startDate.trim().isEmpty())
                     && (endDate == null || endDate.trim().isEmpty())) {
-                String maxDate = reportTableService.getMaxTjDateBm();
+                String maxDate = reportTableService.getMaxTjDate("acd_dangri_gzl_bm");
                 startDate = maxDate;
                 endDate = maxDate;
             }

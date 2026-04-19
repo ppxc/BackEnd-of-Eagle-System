@@ -19,19 +19,15 @@ public class ReportTableServiceImpl implements ReportTableService {
         return reportTableMapper.getCurGzlData(startDate, endDate, comName, groups, userName);
     }
 
+    // 通用
     @Override
-    public String getMaxTjDate() {
-        return reportTableMapper.getMaxTjDate();
+    public String getMaxTjDate(String tableName) {
+        return reportTableMapper.getMaxTjDateByTable(tableName);
     }
 
     @Override
     public List<CurGzlTableBm> getCurGzlDataBm(String startDate, String endDate, String comName) {
         return reportTableMapper.getCurGzlDataBm(startDate, endDate, comName);
-    }
-
-    @Override
-    public String getMaxTjDateBm() {
-        return reportTableMapper.getMaxTjDateBm();
     }
 
 }
