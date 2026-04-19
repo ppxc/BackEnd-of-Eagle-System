@@ -33,10 +33,12 @@ public class LocationController {
     // ====================== 获取指定日期每个用户最新位置 ======================
     @GetMapping("/locations/latest")
     public List<UserLocation> getLatestLocations(
-            @RequestParam(required = false) String date
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String groupscode,
+            @RequestParam(required = false) String keyword
     ) {
         LocalDate queryDate = date == null ? LocalDate.now() : LocalDate.parse(date);
-        return userLocationService.getLatestLocationsByDate(queryDate);
+        return userLocationService.getLatestLocationsByDate(queryDate, groupscode, keyword);
     }
 
     // ====================== 获取指定日期用户当天轨迹 ======================
