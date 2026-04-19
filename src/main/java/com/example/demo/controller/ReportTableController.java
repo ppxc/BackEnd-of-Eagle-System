@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.CurGzlTableRy;
 import com.example.demo.entity.CurGzlTableBm;
+import com.example.demo.entity.CurGzlTableGroup;
+import com.example.demo.entity.CurGzlTableRs;
 import com.example.demo.entity.Result;
 import com.example.demo.service.ReportTableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,65 @@ public class ReportTableController {
 
         } catch (Exception e) {
             return Result.error("获取部门统计失败：" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/cur_gzl_group/list")
+    public Result<List<CurGzlTableGroup>> getCurGzlListGroup(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String comName,
+            @RequestParam(required = false) String groups
+    ) {
+        try {
+            if ((startDate == null || startDate.trim().isEmpty())
+                    && (endDate == null || endDate.trim().isEmpty())) {
+                // 直接用咱们的通用最大日期方法
+                String maxDate = reportTableService.getMaxTjDate("acd_dangri_gzl_group");
+                startDate = maxDate;
+                endDate = maxDate;
+            }
+
+            if (endDate == null || endDate.trim().isEmpty()) {
+                endDate = startDate;
+            }
+
+            List<CurGzlTableGroup> data = reportTableService.getCurGzlDataGroup(
+                    startDate, endDate, comName, groups);
+
+            return Result.success(data);
+
+        } catch (Exception e) {
+            return Result.error("获取小组统计失败：" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/cur_gzl_rs/list")
+    public Result<List<CurGzlTableRs>> getCurGzlListRs(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String comName
+    ) {
+        try {
+            if ((startDate == null || startDate.trim().isEmpty())
+                    && (endDate == null || endDate.trim().isEmpty())) {
+                // 通用最大日期
+                String maxDate = reportTableService.getMaxTjDate("acd_dangri_gzl_rs");
+                startDate = maxDate;
+                endDate = maxDate;
+            }
+
+            if (endDate == null || endDate.trim().isEmpty()) {
+                endDate = startDate;
+            }
+
+            List<CurGzlTableRs> data = reportTableService.getCurGzlDataRs(
+                    startDate, endDate, comName);
+
+            return Result.success(data);
+
+        } catch (Exception e) {
+            return Result.error("获取住院门诊统计失败：" + e.getMessage());
         }
     }
 }

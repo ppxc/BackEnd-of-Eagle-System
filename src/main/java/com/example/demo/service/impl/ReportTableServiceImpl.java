@@ -2,6 +2,8 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.CurGzlTableRy;
 import com.example.demo.entity.CurGzlTableBm;
+import com.example.demo.entity.CurGzlTableGroup;
+import com.example.demo.entity.CurGzlTableRs;
 import com.example.demo.mapper.ReportTableMapper;
 import com.example.demo.service.ReportTableService;
 import org.springframework.stereotype.Service;
@@ -30,4 +32,13 @@ public class ReportTableServiceImpl implements ReportTableService {
         return reportTableMapper.getCurGzlDataBm(startDate, endDate, comName);
     }
 
+    @Override
+    public List<CurGzlTableGroup> getCurGzlDataGroup(String startDate, String endDate, String comName, String groups) {
+        return reportTableMapper.getCurGzlDataGroup(startDate, endDate, comName, groups);
+    }
+
+    @Override
+    public List<CurGzlTableRs> getCurGzlDataRs(String startDate, String endDate, String comName) {
+        return reportTableMapper.getCurGzlDataRs(startDate, endDate, comName);
+    }
 }
