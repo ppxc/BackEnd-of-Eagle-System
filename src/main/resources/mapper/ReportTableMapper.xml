@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.ReportTableMapper">
-    
+
+    <select id="getMaxTjDate" resultType="java.lang.String">
+        SELECT MAX(tjdate)
+        FROM acd_dangri_gzl_ry
+        WHERE groups IS NOT NULL
+          AND groupscode NOT IN ('5101701','5101702','5101703')
+    </select>
+
     <select id="getCurGzlData" resultType="com.example.demo.entity.CurGzlTableRy">
         SELECT a.comname as comName, a.username as userName, a.usercode as userCode, 
                a.groups, a.groupscode as groupsCode,
@@ -25,13 +32,6 @@
           </if>
         GROUP BY 1,2,3,4,5
         ORDER BY comName desc
-    </select>
-
-    <select id="getMaxTjDate" resultType="java.lang.String">
-        SELECT MAX(tjdate)
-        FROM acd_dangri_gzl_ry
-        WHERE groups IS NOT NULL
-          AND groupscode NOT IN ('5101701','5101702','5101703')
     </select>
 
     <!-- ===================== 新表：部门统计 ===================== -->

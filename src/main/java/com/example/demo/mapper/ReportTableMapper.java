@@ -11,14 +11,15 @@ import java.util.List;
 
 @Mapper
 public interface ReportTableMapper{
+
+    String getMaxTjDateByTable(@Param("tableName") String tableName);
+
     // 继承BaseMapper，自带所有CRUD方法，不用写SQL
     List<CurGzlTableRy> getCurGzlData(@Param("startDate") String startDate,
                                       @Param("endDate") String endDate,
                                       @Param("comName") String comName,
                                       @Param("groups") String groups,
                                       @Param("userName") String userName);
-
-    String getMaxTjDateByTable(@Param("tableName") String tableName);
 
     List<CurGzlTableBm> getCurGzlDataBm(
             @Param("startDate") String startDate,
