@@ -12,7 +12,11 @@ import java.util.List;
 public interface UserLocationMapper extends BaseMapper<UserLocation> {
 
     // ====================== 获取指定日期每个用户最新位置（含姓名、ckl、dsl、hj） ======================
-    List<UserLocation> getLatestLocationsByDate(@Param("dateStr") String dateStr);
+    List<UserLocation> getLatestLocationsByDate(
+            @Param("dateStr") String dateStr,
+            @Param("groupscode") String groupscode,
+            @Param("keyword") String keyword
+    );
 
     // ====================== 获取指定日期用户轨迹（也返回姓名） ======================
     List<UserLocation> getUserLocationsByDate(@Param("usercode") String usercode, @Param("dateStr") String dateStr);

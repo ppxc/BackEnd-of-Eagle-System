@@ -1,13 +1,29 @@
 package com.example.demo.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.demo.entity.PeriodicReportTable;
-import com.example.demo.entity.GzlSs;
-import com.example.demo.entity.Cur_Gzl_Table;
+import com.example.demo.entity.CurGzlTableRy;
+import com.example.demo.entity.CurGzlTableBm;
+import com.example.demo.entity.CurGzlTableRs;
+import com.example.demo.entity.CurGzlTableGroup;
+
 import java.util.List;
 
-public interface ReportTableService extends IService<PeriodicReportTable> {
-    List<PeriodicReportTable> getAllData();
-    List<GzlSs> getGzlSsList(String queryTime);
-    List<Cur_Gzl_Table> getCurGzlData(String startDate, String endDate, String comName, String groups, String userName);
+public interface ReportTableService {
+    // 通用获取最大日期
+    String getMaxTjDate(String tableName);
+
+    List<CurGzlTableRy> getCurGzlData(String startDate, String endDate, String comName, String groups, String userName);
+
+    // 新增：按部门统计
+    List<CurGzlTableBm> getCurGzlDataBm(String startDate, String endDate, String comName);
+
+    // 小组统计表
+    List<CurGzlTableGroup> getCurGzlDataGroup(
+            String startDate,
+            String endDate,
+            String comName,
+            String groups
+    );
+
+    // 人员/住院门诊统计表（新表）
+    List<CurGzlTableRs> getCurGzlDataRs(String startDate, String endDate, String comName);
 }

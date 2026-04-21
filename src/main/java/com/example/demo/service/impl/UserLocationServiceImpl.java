@@ -32,13 +32,10 @@ public class UserLocationServiceImpl implements UserLocationService {
 
     // 调用自定义SQL方法
     @Override
-    public List<UserLocation> getLatestLocationsByDate(LocalDate date) {
+    public List<UserLocation> getLatestLocationsByDate(LocalDate date, String groupscode, String keyword) {
         String dateStr = date.toString();
-        List<UserLocation> list = userLocationMapper.getLatestLocationsByDate(dateStr);
-
-        // 自动转换经纬度 → 中文地址
+        List<UserLocation> list = userLocationMapper.getLatestLocationsByDate(dateStr, groupscode, keyword);
         addressConverter.convertBatch(list);
-
         return list;
     }
 

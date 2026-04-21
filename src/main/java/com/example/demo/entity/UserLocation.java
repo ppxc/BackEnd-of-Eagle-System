@@ -20,7 +20,12 @@ public class UserLocation {
     @TableField(exist = false)
     private String username;
     @TableField(exist = false)
+    private String groups;
+    @TableField(exist = false)
+    private String groupscode;
+    @TableField(exist = false)
     private String ckl;
+
     @TableField(exist = false)
     private String dsl;
     @TableField(exist = false)
@@ -28,10 +33,6 @@ public class UserLocation {
 
     @TableField(exist = false)
     private String address;
-    @TableField(exist = false)
-    private String groups;  // 添加 group 字段
-    @TableField(exist = false)
-    private String groupscode;  // 添加 groupcode 字段
 
 
     public Long getId() {
@@ -114,10 +115,9 @@ public class UserLocation {
         this.address = address;
     }
 
-    public String getGroup() {
+    public String getGroups() {
         return groups;
     }
-
     public void setGroups(String groups) {
         this.groups = groups;
     }

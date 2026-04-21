@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("acd_ryzd")
 public class Group {
-    // @TableId(type = IdType.AUTO)
+
     private String groups;
     private String groupscode;
 
