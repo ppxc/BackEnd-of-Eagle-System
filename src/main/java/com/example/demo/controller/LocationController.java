@@ -5,12 +5,14 @@ import com.example.demo.entity.UserLocation;
 import com.example.demo.mapper.GroupMapper;
 import com.example.demo.service.UserLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -24,6 +26,7 @@ public class LocationController {
     private UserLocationService userLocationService;
 
     
+
 
     @GetMapping("/locations")
     public List<UserLocation> getLocations() {
@@ -51,7 +54,8 @@ public class LocationController {
         return userLocationService.getUserLocationsByDate(usercode, queryDate);
     }
 
-    // ====================== 获取片区列表 ======================
+   
+
     
-    
+
 }

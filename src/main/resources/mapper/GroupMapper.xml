@@ -6,4 +6,5 @@
         SELECT distinct a.groups, a.groupscode FROM acd_ryzd a
     </select>
     
+    
 </mapper>
