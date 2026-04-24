@@ -15,6 +15,8 @@ public class LocationAddressConverter {
     // 读取你配置的腾讯KEY
     @Value("${tencent.map.key}")
     private String tencentMapKey;
+    @Value("${tencent.map.api-domain}")
+    private String tencentMapDomain;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -32,7 +34,7 @@ public class LocationAddressConverter {
                     continue;
                 }
 
-                String url = "https://apis.map.qq.com/ws/geocoder/v1/"
+                String url = tencentMapDomain + "/ws/geocoder/v1/"
                         + "?location=" + lat + "," + lng
                         + "&key=" + tencentMapKey;
 
