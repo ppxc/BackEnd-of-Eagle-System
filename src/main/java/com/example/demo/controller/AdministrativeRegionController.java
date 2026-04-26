@@ -28,11 +28,17 @@ public class AdministrativeRegionController {
     @Value("${tencent.map.key}")
     private String tencentMapKey;
 
+    @Value("${tencent.map.domain}")
+    private String mapDomain;
+
+    @Value("${tencent.map.api-domain}")
+    private String apiDomain;
+
     // 地理位置逆解析
     @GetMapping("/map/geocoder")
     public Object getGeocoder(@RequestParam String location) {
         try {
-            String url = "https://apis.map.qq.com/ws/geocoder/v1/?location=" + location + "&key=" + tencentMapKey;
+            String url = mapDomain + "ws/geocoder/v1/?location=" + location + "&key=" + tencentMapKey;
             return restTemplate.getForObject(url, Object.class);
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
@@ -54,7 +60,7 @@ public class AdministrativeRegionController {
                 return error;
             }
             
-            String url = "https://apis.map.qq.com/ws/district/v1/search?key=" + tencentMapKey + "&keyword=" + keyword + "&get_polygon=2&max_offset=100";
+            String url = apiDomain + "ws/district/v1/search?key=" + tencentMapKey + "&keyword=" + keyword + "&get_polygon=2&max_offset=100";
             return restTemplate.getForObject(url, Object.class);
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
@@ -77,7 +83,7 @@ public class AdministrativeRegionController {
                 return error;
             }
             
-            String url = "https://apis.map.qq.com/ws/district/v1/getchildren?key=" + tencentMapKey + "&id=" + id + "&get_polygon=2&max_offset=100";
+            String url = apiDomain + "ws/district/v1/getchildren?key=" + tencentMapKey + "&id=" + id + "&get_polygon=2&max_offset=100";
             return restTemplate.getForObject(url, Object.class);
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
