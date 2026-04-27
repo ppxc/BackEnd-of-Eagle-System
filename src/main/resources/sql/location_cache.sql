@@ -3,8 +3,9 @@ CREATE TABLE IF NOT EXISTS location_cache (
   longitude REAL NOT NULL,
   latitude REAL NOT NULL,
   address TEXT NOT NULL,
-  create_time DATETIME NOT NULL,
-  update_time DATETIME NOT NULL
+  create_time STRING NOT NULL,
+  update_time STRING NOT NULL,
+  expire_time STRING
 );
 
 CREATE INDEX IF NOT EXISTS idx_coordinates ON location_cache (longitude, latitude);
