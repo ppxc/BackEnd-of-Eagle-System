@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-@CrossOrigin("*")
+// @CrossOrigin("*")
 @RestController
 @RequestMapping("/api")
 public class LocationController {
