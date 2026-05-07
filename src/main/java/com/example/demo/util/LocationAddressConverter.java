@@ -362,8 +362,8 @@ public class LocationAddressConverter {
                     // 解析坐标
                     JsonNode locationNode = resultNode.path("location");
                     GeocodeResult.Location location = new GeocodeResult.Location();
-                    location.setLat(locationNode.path("lat").asDouble());
-                    location.setLng(locationNode.path("lng").asDouble());
+                    location.setLat(formatDouble(locationNode.path("lat").asDouble(), 3));
+                    location.setLng(formatDouble(locationNode.path("lng").asDouble(), 3));
                     resultData.setLocation(location);
 
                     // 解析地址部件

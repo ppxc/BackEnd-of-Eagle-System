@@ -16,7 +16,7 @@ import com.example.demo.mapper.GroupMapper;
 import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*")
+// @CrossOrigin("*")
 public class GroupController {
     
     @Autowired
