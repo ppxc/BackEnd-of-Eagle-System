@@ -2,16 +2,62 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.UserLocationMapper">
 
-    <!-- 自定义SQL：获取指定日期每个用户最新位置 -->
-    <select id="getLatestLocationsByDate" resultType="com.example.demo.entity.UserLocation">
-        SELECT a.id, a.usercode, a.longitude, a.latitude, a.create_time,
+    <resultMap id="UserLocationResultMap" type="com.example.demo.entity.UserLocation">
+        <id column="id" property="id"/>
+        <result column="usercode" property="usercode"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="reporttime" property="reportTime"/>
+        <result column="username" property="username"/>
+        <result column="groups" property="groups"/>
+        <result column="groupscode" property="groupscode"/>
+        <result column="ckl" property="ckl"/>
+        <result column="dsl" property="dsl"/>
+        <result column="hj" property="hj"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.demo.entity.UserLocation">
+        INSERT INTO acd_jly_site (usercode, longitude, latitude, reporttime)
+        VALUES (#{usercode}, #{longitude}, #{latitude}, #{reportTime})
+    </insert>
+
+    <select id="selectById" resultMap="UserLocationResultMap">
+        SELECT id, usercode, longitude, latitude, reporttime
+        FROM acd_jly_site
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="com.example.demo.entity.UserLocation">
+        UPDATE acd_jly_site
+        SET 
+            usercode = #{usercode},
+            longitude = #{longitude},
+            latitude = #{latitude},
+            reporttime = #{reportTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM acd_jly_site WHERE id = #{id}
+    </delete>
+
+    <select id="selectByUsercode" resultMap="UserLocationResultMap">
+        SELECT id, usercode, longitude, latitude, reporttime
+        FROM acd_jly_site
+        WHERE usercode = #{usercode}
+        ORDER BY reporttime DESC
+    </select>
+
+    <select id="getLatestLocationsByDate" resultMap="UserLocationResultMap">
+        SELECT a.id, a.usercode, a.longitude, a.latitude, a.reporttime,
                b.username,b.groups,b.groupscode, b.ckl, b.dsl, b.hj
-        FROM user_location a
+        FROM acd_jly_site a
                  LEFT JOIN acd_ryzd b ON a.usercode = b.usercode
-        WHERE date(a.create_time) = #{dateStr}
-          AND (a.usercode, a.create_time) IN
-            (SELECT usercode, MAX(create_time) FROM user_location
-            WHERE date(create_time) = #{dateStr} GROUP BY usercode)
+        WHERE date(a.reporttime) = #{dateStr}
+          AND (a.usercode, a.reporttime) IN
+            (SELECT usercode, MAX(reporttime) FROM acd_jly_site
+            WHERE date(reporttime) = #{dateStr} GROUP BY usercode)
         <if test="groupscode != null and groupscode != ''">
             AND b.groupscode = #{groupscode}
         </if>
@@ -23,22 +69,26 @@
         </if>
     </select>
 
-    <!-- 自定义SQL：获取指定日期用户轨迹 -->
-    <select id="getUserLocationsByDate" resultType="com.example.demo.entity.UserLocation">
-        SELECT a.id, a.usercode, a.longitude, a.latitude, a.create_time,
+    <select id="getUserLocationsByDate" resultMap="UserLocationResultMap">
+        SELECT a.id, a.usercode, a.longitude, a.latitude, a.reporttime,
                b.username,b.groups,b.groupscode, b.ckl, b.dsl, b.hj
-        FROM user_location a
+        FROM acd_jly_site a
                  LEFT JOIN acd_ryzd b ON a.usercode = b.usercode
-        WHERE a.usercode = #{usercode} AND date(a.create_time) = #{dateStr}
-        ORDER BY a.create_time ASC
+        WHERE a.usercode = #{usercode} AND date(a.reporttime) = #{dateStr}
+        ORDER BY a.reporttime ASC
     </select>
 
-    <!-- 自定义SQL：获取所有位置按时间排序 -->
-    <select id="getAllLocationsOrderByTime" resultType="com.example.demo.entity.UserLocation">
-        SELECT id, usercode, longitude, latitude, create_time
-        FROM user_location
-        WHERE date(create_time) = #{dateStr}
-        ORDER BY create_time ASC
+    <select id="getAllLocationsOrderByTime" resultMap="UserLocationResultMap">
+        SELECT id, usercode, longitude, latitude, reporttime
+        FROM acd_jly_site
+        WHERE date(reporttime) = #{dateStr}
+        ORDER BY reporttime ASC
+    </select>
+
+    <select id="selectAll" resultMap="UserLocationResultMap">
+        SELECT id, usercode, longitude, latitude, reporttime
+        FROM acd_jly_site
+        ORDER BY reporttime DESC
     </select>
 
 </mapper>
