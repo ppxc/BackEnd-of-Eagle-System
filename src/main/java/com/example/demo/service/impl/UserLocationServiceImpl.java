@@ -50,15 +50,15 @@ public class UserLocationServiceImpl implements UserLocationService {
         // ====================== 1. 按小时分组，取每小时最后一条（原来逻辑） ======================
         Map<String, UserLocation> hourlyMaxMap = locationList.stream()
                 .collect(Collectors.toMap(
-                        loc -> loc.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH")),
+                        loc -> loc.getReportTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH")),
                         loc -> loc,
                         (existing, replacement) ->
-                                existing.getCreateTime().isAfter(replacement.getCreateTime()) ? existing : replacement
+                                existing.getReportTime().isAfter(replacement.getReportTime()) ? existing : replacement
                 ));
 
         // ====================== 2. 找出当天最早一条（新增） ======================
         UserLocation firstLocationOfDay = locationList.stream()
-                .min((a, b) -> a.getCreateTime().compareTo(b.getCreateTime()))
+                .min((a, b) -> a.getReportTime().compareTo(b.getReportTime()))
                 .orElse(null);
 
         // ====================== 3. 把【最早一条】加入需要解析的列表 ======================

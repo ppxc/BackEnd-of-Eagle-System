@@ -1,12 +1,8 @@
 package com.example.demo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 
-@TableName("location_cache")
 public class LocationCache {
-    @TableId(type = IdType.AUTO)
+
     private Long id;
     private Double longitude;
     private Double latitude;

@@ -7,7 +7,7 @@
         <result column="usercode" property="usercode"/>
         <result column="longitude" property="longitude"/>
         <result column="latitude" property="latitude"/>
-        <result column="reporttime" property="createTime"/>
+        <result column="reporttime" property="reportTime"/>
         <result column="username" property="username"/>
         <result column="groups" property="groups"/>
         <result column="groupscode" property="groupscode"/>
@@ -19,7 +19,7 @@
 
     <insert id="insert" parameterType="com.example.demo.entity.UserLocation">
         INSERT INTO acd_jly_site (usercode, longitude, latitude, reporttime)
-        VALUES (#{usercode}, #{longitude}, #{latitude}, #{createTime})
+        VALUES (#{usercode}, #{longitude}, #{latitude}, #{reportTime})
     </insert>
 
     <select id="selectById" resultMap="UserLocationResultMap">
@@ -34,7 +34,7 @@
             usercode = #{usercode},
             longitude = #{longitude},
             latitude = #{latitude},
-            reporttime = #{createTime}
+            reporttime = #{reportTime}
         WHERE id = #{id}
     </update>
 
