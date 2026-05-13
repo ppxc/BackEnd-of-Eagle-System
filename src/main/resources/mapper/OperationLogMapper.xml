@@ -2,9 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.OperationLogMapper">
 
-    <select id="selectByCondition" resultType="com.example.demo.entity.OperationLog">
-        SELECT id, username, usercode, roles, operation, create_time as createTime
-        FROM sys_operation_log
+    <resultMap id="OperationLogResultMap" type="com.example.demo.entity.OperationLog">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="usercode" property="usercode"/>
+        <result column="roles" property="roles"/>
+        <result column="operation" property="operation"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.demo.entity.OperationLog">
+        INSERT INTO acd_sys_operation_log (username, usercode, roles, operation, create_time)
+        VALUES (#{username}, #{usercode}, #{roles}, #{operation}, #{createTime})
+    </insert>
+
+    <select id="selectById" resultMap="OperationLogResultMap">
+        SELECT id, username, usercode, roles, operation, create_time
+        FROM acd_sys_operation_log
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="com.example.demo.entity.OperationLog">
+        UPDATE acd_sys_operation_log
+        SET 
+            username = #{username},
+            usercode = #{usercode},
+            roles = #{roles},
+            operation = #{operation},
+            create_time = #{createTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM acd_sys_operation_log WHERE id = #{id}
+    </delete>
+
+    <select id="selectByCondition" resultMap="OperationLogResultMap">
+        SELECT id, username, usercode, roles, operation, create_time
+        FROM acd_sys_operation_log
         WHERE 1=1
         <if test="username != null and username != ''">
             AND username LIKE '%' || #{username} || '%'
@@ -13,7 +48,7 @@
             AND usercode = #{usercode}
         </if>
         <if test="startTime != null and startTime != ''">
-            AND create_time &gt;= #{startTime}
+            AND create_time >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
             AND create_time &lt;= #{endTime}
@@ -26,7 +61,7 @@
 
     <select id="countByCondition" resultType="int">
         SELECT COUNT(*)
-        FROM sys_operation_log
+        FROM acd_sys_operation_log
         WHERE 1=1
         <if test="username != null and username != ''">
             AND username LIKE '%' || #{username} || '%'
@@ -35,7 +70,7 @@
             AND usercode = #{usercode}
         </if>
         <if test="startTime != null and startTime != ''">
-            AND create_time &gt;= #{startTime}
+            AND create_time >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
             AND create_time &lt;= #{endTime}

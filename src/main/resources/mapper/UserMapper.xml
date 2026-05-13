@@ -4,17 +4,17 @@
 
     <select id="findByUsername" resultType="com.example.demo.entity.User">
         SELECT id, usercode, username, password, role, status, create_time as createTime, update_time as updateTime
-        FROM users
+        FROM acd_eagle_users_account
         WHERE username = #{username}
     </select>
 
     <insert id="insert" parameterType="com.example.demo.entity.User">
-        INSERT INTO users (usercode, username, password,status, create_time, update_time)
+        INSERT INTO acd_eagle_users_account (usercode, username, password,status, create_time, update_time)
         VALUES (#{usercode}, #{username}, #{password}, #{createTime}, #{updateTime})
     </insert>
 
     <update id="updateById" parameterType="com.example.demo.entity.User">
-        UPDATE users
+        UPDATE acd_eagle_users_account
         SET 
             usercode = #{usercode},
             username = #{username},
@@ -26,7 +26,7 @@
     </update>
 
     <delete id="deleteById">
-        DELETE FROM users WHERE id = #{id}
+        DELETE FROM acd_eagle_users_account WHERE id = #{id}
     </delete>
 
 </mapper>

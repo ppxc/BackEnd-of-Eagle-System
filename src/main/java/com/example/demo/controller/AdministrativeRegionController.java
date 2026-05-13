@@ -35,10 +35,35 @@ public class AdministrativeRegionController {
     @GetMapping("/map/geocoder")
     public Object getGeocoder(@RequestParam String location) {
         try {
-            String url = apiDomain + "ws/geocoder/v1/?location=" + location + "&key=" + tencentMapKey;
+            if (location == null || location.trim().isEmpty() || location.equals("undefined")) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("status", 400);
+                error.put("message", "location参数不能为空");
+                return error;
+            }
+            
+            String[] latLng = location.split(",");
+            if (latLng.length != 2) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("status", 400);
+                error.put("message", "location参数格式错误，应为：纬度,经度（如：39.98421,116.307439）");
+                return error;
+            }
+            
+            try {
+                Double.parseDouble(latLng[0].trim());
+                Double.parseDouble(latLng[1].trim());
+            } catch (NumberFormatException e) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("status", 400);
+                error.put("message", "location参数必须是有效的数字");
+                return error;
+            }
+            
+            String encodedLocation = java.net.URLEncoder.encode(location, "UTF-8");
+            String url = apiDomain + "ws/geocoder/v1/?location=" + encodedLocation + "&key=" + tencentMapKey;
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             
-            // 尝试解析为JSON，失败则返回原始字符串
             return parseResponse(response.getBody());
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
