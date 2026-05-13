@@ -1,6 +1,5 @@
 package com.example.demo.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.demo.entity.UserLocation;
 import com.example.demo.mapper.UserLocationMapper;
 import com.example.demo.service.UserLocationService;
@@ -22,10 +21,10 @@ public class UserLocationServiceImpl implements UserLocationService {
     @Autowired
     private LocationAddressConverter addressConverter; // 地址解析工具
 
-    // 用MyBatis-Plus自带的selectList实现，不用写SQL
+    // 获取所有位置记录
     @Override
     public List<UserLocation> getAllLocations() {
-        return userLocationMapper.selectList(new LambdaQueryWrapper<>());
+        return userLocationMapper.selectAll();
     }
 
 

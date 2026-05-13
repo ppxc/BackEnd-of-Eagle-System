@@ -1,13 +1,20 @@
 package com.example.demo.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.demo.entity.PrplCheckTask;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
-public interface PrplCheckTaskMapper extends BaseMapper<PrplCheckTask> {
-    List<PrplCheckTask> getAllTasksByDate(@Param("dateStr") String dateStr);
+public interface PrplCheckTaskMapper {
+
+    int insert(PrplCheckTask prplCheckTask);
+
+    PrplCheckTask selectById(Long id);
+
+    int updateById(PrplCheckTask prplCheckTask);
+
+    int deleteById(Long id);
+
+    List<PrplCheckTask> getAllTasksByDate(String date);
 }

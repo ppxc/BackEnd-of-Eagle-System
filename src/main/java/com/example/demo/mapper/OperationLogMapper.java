@@ -1,6 +1,5 @@
 package com.example.demo.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.demo.entity.OperationLog;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -8,7 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface OperationLogMapper extends BaseMapper<OperationLog> {
+public interface OperationLogMapper {
+
+    int insert(OperationLog operationLog);
+
+    OperationLog selectById(Long id);
+
+    int updateById(OperationLog operationLog);
+
+    int deleteById(Long id);
 
     List<OperationLog> selectByCondition(Map<String, Object> params);
 
