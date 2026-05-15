@@ -50,6 +50,7 @@
         FROM acd_location_address_cache
         WHERE longitude = #{longitude} AND latitude = #{latitude}
           AND expire_time >= #{currentTime}
+        LIMIT 1
     </select>
 
     <select id="findByAddress" resultMap="LocationCacheResultMap">
