@@ -1,37 +1,21 @@
 package com.example.demo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 
-@TableName("user_location")
 public class UserLocation {
-    @TableId(type = IdType.AUTO)
     private Long id;
     private String usercode;
     private Double longitude;
     private Double latitude;
-    @TableField("create_time")
-    private LocalDateTime createTime;
+    private LocalDateTime reportTime;
 
     // 关联表字段
-    @TableField(exist = false)
     private String username;
-    @TableField(exist = false)
     private String groups;
-    @TableField(exist = false)
     private String groupscode;
-    @TableField(exist = false)
     private String ckl;
-
-    @TableField(exist = false)
     private String dsl;
-    @TableField(exist = false)
     private String hj;
-
-    @TableField(exist = false)
     private String address;
 
 
@@ -67,12 +51,12 @@ public class UserLocation {
         this.latitude = latitude;
     }
 
-    public LocalDateTime getCreateTime() {
-        return createTime;
+    public LocalDateTime getReportTime() {
+        return reportTime;
     }
 
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
+    public void setReportTime(LocalDateTime reportTime) {
+        this.reportTime = reportTime;
     }
 
     public String getUsername() {

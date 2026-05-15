@@ -1,12 +1,6 @@
 package com.example.demo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-@TableName("prplchecktask")
 public class PrplCheckTask {
-    @TableId(type = IdType.AUTO)
     private Long id;
     private Double checklongitude;
     private Double checklatitude;

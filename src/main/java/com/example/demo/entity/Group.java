@@ -1,8 +1,5 @@
 package com.example.demo.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-
-@TableName("acd_ryzd")
 public class Group {
 
     private String groups;

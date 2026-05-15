@@ -10,6 +10,6 @@ public class User {
     private String password;
     private String role;
     private Integer status;
-    private String createTime;
+    private String reportTime;
     private String updateTime;
 }
