@@ -51,9 +51,9 @@
 
     <select id="getLatestLocationsByDate" resultMap="UserLocationResultMap">
         SELECT a.id, a.usercode, a.longitude, a.latitude, a.reporttime,
-               b.username,b.groups,b.groupscode, b.ckl, b.dsl, b.hj
+               b.username,b.groups,b.groupscode, b.ck_wcl ckl, b.ds_wcl dsl, (b.ck_wcl+b.ds_wcl) hj
         FROM acd_jly_site a
-                 LEFT JOIN acd_ryzd b ON a.usercode = b.usercode
+                 LEFT JOIN acd_dangri_gzl_ry b ON a.usercode = b.usercode
         WHERE date(a.reporttime) = #{dateStr}
           AND (a.usercode, a.reporttime) IN
             (SELECT usercode, MAX(reporttime) FROM acd_jly_site
@@ -71,9 +71,9 @@
 
     <select id="getUserLocationsByDate" resultMap="UserLocationResultMap">
         SELECT a.id, a.usercode, a.longitude, a.latitude, a.reporttime,
-               b.username,b.groups,b.groupscode, b.ckl, b.dsl, b.hj
+               b.username,b.groups,b.groupscode, b.ck_wcl ckl, b.ds_wcl dsl, (b.ck_wcl+b.ds_wcl) hj
         FROM acd_jly_site a
-                 LEFT JOIN acd_ryzd b ON a.usercode = b.usercode
+                 LEFT JOIN acd_dangri_gzl_ry b ON a.usercode = b.usercode
         WHERE a.usercode = #{usercode} AND date(a.reporttime) = #{dateStr}
         ORDER BY a.reporttime ASC
     </select>
