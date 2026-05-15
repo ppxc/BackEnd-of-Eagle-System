@@ -33,7 +33,8 @@ public class UserLocationServiceImpl implements UserLocationService {
     public List<UserLocation> getLatestLocationsByDate(LocalDate date, String groupscode, String keyword) {
         String dateStr = date.toString();
         List<UserLocation> list = userLocationMapper.getLatestLocationsByDate(dateStr, groupscode, keyword);
-        addressConverter.convertBatch(list);
+        // 使用分批异步处理，先处理第一批立即返回，剩余后台处理
+        addressConverter.convertBatchWithAsync(list, true);
         return list;
     }
 
@@ -75,7 +76,7 @@ public class UserLocationServiceImpl implements UserLocationService {
         }
 
         // ====================== 4. 只对这些数据解析地址（省额度） ======================
-        addressConverter.convertBatch(needAddressList);
+        addressConverter.convertBatchWithAsync(needAddressList, true);
 
         // 返回原列表（自动回填地址）
         return locationList;

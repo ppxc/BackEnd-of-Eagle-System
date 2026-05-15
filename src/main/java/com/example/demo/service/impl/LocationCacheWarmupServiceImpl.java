@@ -27,7 +27,7 @@ public class LocationCacheWarmupServiceImpl implements LocationCacheWarmupServic
         List<UserLocation> locationList = userLocationMapper.getLatestLocationsByDate(dateStr, null, null);
 
         if (locationList != null && !locationList.isEmpty()) {
-            addressConverter.convertBatch(locationList);
+            addressConverter.convertBatchWithAsync(locationList, true);
         }
     }
 }

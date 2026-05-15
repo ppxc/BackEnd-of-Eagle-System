@@ -51,6 +51,9 @@ public class LocationAddressConverter {
         this.locationCacheMapper = locationCacheMapper;
     }
 
+    // 每批次处理的数量（默认每批处理20个坐标）
+    private static final int BATCH_SIZE = 20;
+
     public List<UserLocation> convertBatch(List<UserLocation> locationList) {
         if (locationList == null || locationList.isEmpty()) return locationList;
 
@@ -85,7 +88,7 @@ public class LocationAddressConverter {
             needConvertList.add(loc);
         }
 
-        // 顺序处理需要转换的坐标（单线程，严格控制速率）
+        // 分批次处理需要转换的坐标
         if (!needConvertList.isEmpty()) {
             // 对需要处理的坐标去重（根据经纬度）
             List<UserLocation> uniqueList = new ArrayList<>();
@@ -101,25 +104,39 @@ public class LocationAddressConverter {
             }
             uniqueList.addAll(coordToLocation.values());
 
-            logger.info("开始顺序处理 {} 个唯一坐标", uniqueList.size());
+            logger.info("开始分批处理 {} 个唯一坐标，每批处理 {} 个", uniqueList.size(), BATCH_SIZE);
 
-            // 顺序处理每个坐标，严格控制请求速率
-            for (UserLocation loc : uniqueList) {
-                try {
-                    // 等待直到可以发送请求
-                    waitForRateLimit();
-                    
-                    // 执行转换
-                    convertSingleLocation(loc);
-                    
-                    // 请求成功后增加计数
-                    int count = requestCount.incrementAndGet();
-                    logger.debug("已发送第 {} 个请求", count);
-                    
-                } catch (Exception e) {
-                    logger.error("坐标解析异常: {}", e.getMessage());
-                    loc.setAddress("解析异常");
+            // 分批次处理
+            int totalSize = uniqueList.size();
+            int batchCount = (totalSize + BATCH_SIZE - 1) / BATCH_SIZE;
+            
+            for (int batchIndex = 0; batchIndex < batchCount; batchIndex++) {
+                int start = batchIndex * BATCH_SIZE;
+                int end = Math.min(start + BATCH_SIZE, totalSize);
+                List<UserLocation> batchList = uniqueList.subList(start, end);
+                
+                logger.info("处理第 {}/{} 批次，共 {} 个坐标", batchIndex + 1, batchCount, batchList.size());
+                
+                // 处理当前批次
+                for (UserLocation loc : batchList) {
+                    try {
+                        // 等待直到可以发送请求
+                        waitForRateLimit();
+                        
+                        // 执行转换（转换成功后会自动保存到缓存）
+                        convertSingleLocation(loc);
+                        
+                        // 请求成功后增加计数
+                        int count = requestCount.incrementAndGet();
+                        logger.debug("已发送第 {} 个请求", count);
+                        
+                    } catch (Exception e) {
+                        logger.error("坐标解析异常: {}", e.getMessage());
+                        loc.setAddress("解析异常");
+                    }
                 }
+                
+                logger.info("第 {}/{} 批次处理完成", batchIndex + 1, batchCount);
             }
 
             // 将解析结果回填到原列表中相同坐标的位置
@@ -135,6 +152,172 @@ public class LocationAddressConverter {
         }
 
         return locationList;
+    }
+
+    /**
+     * 分批处理方法：先处理第一批并返回，剩余批次后台异步处理
+     * @param locationList 位置列表
+     * @param processFirstBatch 是否先处理第一批再返回（true: 先处理第一批；false: 立即返回，全部后台处理）
+     * @return 立即返回已处理缓存的结果，未处理的标记为"解析中"
+     */
+    public List<UserLocation> convertBatchWithAsync(List<UserLocation> locationList, boolean processFirstBatch) {
+        if (locationList == null || locationList.isEmpty()) return locationList;
+
+        // 过滤出需要解析的坐标
+        List<UserLocation> needConvertList = new ArrayList<>();
+        for (UserLocation loc : locationList) {
+
+            if (loc.getLongitude() == null || loc.getLatitude() == null ||
+                Double.isNaN(loc.getLongitude()) || Double.isNaN(loc.getLatitude())) {
+                loc.setAddress("坐标无效");
+                continue;
+            }
+
+            // 验证坐标范围（中国地区大致范围）
+            if (loc.getLongitude() < 73 || loc.getLongitude() > 135 ||
+                loc.getLatitude() < 3 || loc.getLatitude() > 53) {
+                loc.setAddress("坐标范围无效");
+                continue;
+            }
+
+            // 先查询数据库缓存（只查询有效的缓存）
+            LocationCache cache = locationCacheMapper.findValidByCoordinates(
+                formatDouble(loc.getLongitude(), 3), 
+                formatDouble(loc.getLatitude(), 3), 
+                formatDate(LocalDateTime.now())
+            );
+            if (cache != null) {
+                loc.setAddress(cache.getAddress());
+                continue;
+            }
+
+            needConvertList.add(loc);
+        }
+
+        // 如果没有需要转换的坐标，直接返回
+        if (needConvertList.isEmpty()) {
+            logger.info("所有坐标均已在缓存中，无需转换");
+            return locationList;
+        }
+
+        // 对需要处理的坐标去重（根据经纬度）
+        List<UserLocation> uniqueList = new ArrayList<>();
+        Set<String> processedCoords = new HashSet<>();
+        Map<String, UserLocation> coordToLocation = new HashMap<>();
+
+        for (UserLocation loc : needConvertList) {
+            String coordKey = formatDouble(loc.getLongitude(), 3) + "," + formatDouble(loc.getLatitude(), 3);
+            if (!processedCoords.contains(coordKey)) {
+                processedCoords.add(coordKey);
+                coordToLocation.put(coordKey, loc);
+            }
+        }
+        uniqueList.addAll(coordToLocation.values());
+
+        logger.info("发现 {} 个需要转换的唯一坐标", uniqueList.size());
+
+        // 如果只有一个批次，同步处理
+        if (uniqueList.size() <= BATCH_SIZE) {
+            logger.info("坐标数量少于批次大小，直接同步处理");
+            return convertBatch(locationList);
+        }
+
+        // 标记所有待处理坐标为"解析中"
+        for (UserLocation loc : needConvertList) {
+            loc.setAddress("解析中");
+        }
+
+        // 准备分批处理
+        int totalSize = uniqueList.size();
+        int batchCount = (totalSize + BATCH_SIZE - 1) / BATCH_SIZE;
+        
+        if (processFirstBatch) {
+            // 同步处理第一批
+            List<UserLocation> firstBatch = uniqueList.subList(0, Math.min(BATCH_SIZE, totalSize));
+            logger.info("同步处理第一批，共 {} 个坐标", firstBatch.size());
+            
+            for (UserLocation loc : firstBatch) {
+                try {
+                    waitForRateLimit();
+                    convertSingleLocation(loc);
+                    int count = requestCount.incrementAndGet();
+                    logger.debug("已发送第 {} 个请求", count);
+                } catch (Exception e) {
+                    logger.error("坐标解析异常: {}", e.getMessage());
+                    loc.setAddress("解析异常");
+                }
+            }
+            
+            // 回填第一批结果
+            for (UserLocation loc : needConvertList) {
+                String coordKey = formatDouble(loc.getLongitude(), 3) + "," + formatDouble(loc.getLatitude(), 3);
+                UserLocation processedLoc = coordToLocation.get(coordKey);
+                if (processedLoc != null && !"解析中".equals(processedLoc.getAddress())) {
+                    loc.setAddress(processedLoc.getAddress());
+                }
+            }
+            
+            logger.info("第一批处理完成，立即返回结果");
+        }
+
+        // 异步处理剩余批次
+        if (totalSize > BATCH_SIZE) {
+            List<UserLocation> remainingList = new ArrayList<>(uniqueList.subList(BATCH_SIZE, totalSize));
+            Map<String, UserLocation> remainingCoordMap = new HashMap<>();
+            
+            for (UserLocation loc : needConvertList) {
+                String coordKey = formatDouble(loc.getLongitude(), 3) + "," + formatDouble(loc.getLatitude(), 3);
+                if (remainingList.stream().anyMatch(r -> 
+                    (formatDouble(r.getLongitude(), 3) + "," + formatDouble(r.getLatitude(), 3)).equals(coordKey))) {
+                    remainingCoordMap.put(coordKey, loc);
+                }
+            }
+            
+            // 使用executorService异步处理剩余批次
+            executorService.submit(() -> {
+                processRemainingBatchesAsync(remainingList, remainingCoordMap, batchCount - 1);
+            });
+            
+            logger.info("剩余 {} 个坐标已提交后台异步处理", remainingList.size());
+        }
+
+        return locationList;
+    }
+
+    /**
+     * 异步处理剩余批次
+     */
+    private void processRemainingBatchesAsync(List<UserLocation> remainingList, 
+                                              Map<String, UserLocation> coordMap, 
+                                              int batchCount) {
+        logger.info("开始异步处理剩余 {} 个坐标，共 {} 批", remainingList.size(), batchCount);
+        
+        int totalSize = remainingList.size();
+        int processedCount = 0;
+        
+        for (int batchIndex = 0; batchIndex < batchCount; batchIndex++) {
+            int start = batchIndex * BATCH_SIZE;
+            int end = Math.min(start + BATCH_SIZE, totalSize);
+            List<UserLocation> batchList = remainingList.subList(start, end);
+            
+            logger.info("异步处理第 {}/{} 批次，共 {} 个坐标", batchIndex + 1, batchCount, batchList.size());
+            
+            for (UserLocation loc : batchList) {
+                try {
+                    waitForRateLimit();
+                    convertSingleLocation(loc);
+                    processedCount++;
+                    logger.debug("异步处理已完成 {} 个坐标", processedCount);
+                } catch (Exception e) {
+                    logger.error("异步坐标解析异常: {}", e.getMessage());
+                    loc.setAddress("解析异常");
+                }
+            }
+            
+            logger.info("异步第 {}/{} 批次处理完成", batchIndex + 1, batchCount);
+        }
+        
+        logger.info("所有异步处理完成，共处理 {} 个坐标", processedCount);
     }
 
     /**
